@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:local="*">
+<fx:Script>
+	<![CDATA[
+		import flashx.textLayout.formats.Float;
+		
+		import mx.controls.Image;
+		import mx.core.BitmapAsset;
+		
+		import spark.skins.spark.ImageSkin;
+		
+		
+		private var isDown:Boolean;
+		private var currTarget:Element;
+		private var lastTarget:Element;
+		private var startX:Number 
+		private var startY:Number;
+		
+		
+		public function init():void{
+		
+			isDown = false;
+
+		}
+		
+		
+		/**kreacja tablicy mendelejewa*/
+		private function AddImages(){
+			var img= new spark.components.Image();
+			img.source = "assets/s.png";
+			img.name = "s";
+			img.addEventListener(MouseEvent.CLICK, onBoardMouseClick);
+			imgGroup.addElement(img);
+		}
+		
+		private function onBoardMouseClick(e:MouseEvent):void{
+			var _name = e.target.parent.name;
+			trace("clicked on ",_name);
+			addPierwiastek(_name);
+		}
+		
+		/** dodawanie pierwiastka na stol */
+		private function addPierwiastek(name:String):void{
+			if(currTarget!=null){
+				currTarget.Unselect();
+				currTarget = null;
+			}
+			if(lastTarget!=null){
+				lastTarget.Unselect();
+				lastTarget = null;
+			}
+			
+			
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		var _source:String = "";
+		var isFound:Boolean=true;
+			
+			switch(name){
+				case "s":
+					_source= "assets/_s.png";
+					break;
+				default:
+					isFound=false;
+					break;
+			}
+			
+			if(isFound==true){
+				
+				var img : Element = new Element(_source, 3);
+				img.addEventListener(MouseEvent.MOUSE_DOWN, onElementMouseDown);
+				board.addChild(img as DisplayObject);
+				
+//				
+//				var img= new spark.components.Image();
+//				img.source =_source;
+//				img.addEventListener(MouseEvent.MOUSE_DOWN, onElementMouseDown);
+//				img.name = "_"+name;
+//				board.addChild(img);
+			}
+			else{
+				trace("name not found");
+			}
+		}
+		
+		private function onElementMouseDown(e:MouseEvent):void{
+	
+		
+			stage.addEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
+			var target  = e.target.parent;
+			if(e.shiftKey){
+				startDrawingBond();
+			}
+			else {
+				MoveElement(target);
+			}
+			
+		}
+		
+		/** poruszanie pierwiastków po planszy / rysowanie wiązań */
+		private function MoveElement(target:Element){
+	
+			if(target==currTarget){
+				target.Unselect();
+				currTarget=null;
+			
+			}
+			else{
+				stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				isDown=true;
+				target.RemoveAllBonds();
+				
+				if(lastTarget!=null){
+					lastTarget.Unselect();
+				}
+				lastTarget=currTarget;
+				currTarget  = target;
+				currTarget.Select();
+				currTarget.alpha=0.5;
+			}
+			
+		}
+		
+	
+		
+		/** przeciaganie pierwiastków */
+		private function onMouseMove(e:MouseEvent):void
+		{
+		
+			if(isDown) {
+				currTarget.x = mouseX-46;
+				currTarget.y=mouseY-46;
+			}
+	
+			
+		}
+		
+
+		private function onElementMouseUp(e:MouseEvent):void{
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseMove);
+			
+			isDown=false;
+			
+			
+		}
+		
+	
+		
+		private function startDrawingBond(){
+			
+			if(lastTarget!=null&& lastTarget!=currTarget && currTarget!=null){
+				if(lastTarget.isAvalibleBonds() && currTarget.isAvalibleBonds()){
+				var bond:Bond = new Bond(currTarget,lastTarget);
+				board.addChild(bond);
+				bond.graphics.moveTo(currTarget.x+50, currTarget.y+50);
+				bond.graphics.lineTo(lastTarget.x+50, lastTarget.y+50);
+				bond.addEventListener(MouseEvent.CLICK, onBondClick);
+				}
+				else{
+					trace("maximum bonds");
+				}
+			}
+			
+		}
+		
+		
+		private function onBondClick(e:MouseEvent){
+			var target = e.target as Bond;
+			target.removeEventListener(MouseEvent.CLICK, onBondClick);
+			target.RemoveBond();
+		}
+		
+			private function onKeyDown(e:KeyboardEvent):void{
+				
+				if(e.keyCode==Keyboard.DELETE){
+					DeleteCurrent();
+					
+				}
+			}
+		
+		private function DeleteCurrent():void{
+			if(currTarget!=null){
+				currTarget.RemoveAllBonds();
+				currTarget.parent.removeChild(currTarget as DisplayObject);
+				currTarget=null;
+			}
+		}
+		
+		private function Check():void{
+						
+			
+		}
+		
+		
+		protected function onReadyClick():void{
+			//wywolanie okna z wynikiem?
+			board.enabled = false;
+			Check();
+		}
+		
+	]]>
+</fx:Script>
+	
+	
+	<s:BorderContainer left="0" right="0" top="0" bottom="0" horizontalCenter="0" verticalCenter="0" initialize="init">
+		<s:VGroup id="imgGroup" left="0" right="0" bottom="0" height="150" horizontalCenter="0"
+				  preinitialize="AddImages()">
+		</s:VGroup>
+		<s:BorderContainer left="0" right="0" top="0" height="450" horizontalCenter="0">
+			<local:Main id="board" left="0" right="0" top="0" bottom="0" horizontalCenter="0"
+						verticalCenter="0">
+			</local:Main>
+			<s:HGroup left="730" right="0" top="400" bottom="0" horizontalAlign="right"
+					  verticalAlign="bottom" verticalCenter="200">
+				<s:Button id="done_btn" x="50" width="100" label="gotowe!" click="onReadyClick"/>
+				<s:Button id="addBond_btn" label="dodaj wiązanie" click="startDrawingBond()"/>
+				<s:Button id="remove_btn" label="usuń pierwiastek" click="DeleteCurrent()" />
+			</s:HGroup>
+		</s:BorderContainer>
+	</s:BorderContainer>
+</s:Application>
