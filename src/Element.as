@@ -14,25 +14,25 @@ package
 		public var isSelected:Boolean;
 		
 		private var bondCount:uint;
-		public var currBondCount;
 		public var bonds:ArrayCollection = new ArrayCollection;
-		
+		public function get currBondCount():Object {return bonds.length}
+		public static var allElements:ArrayCollection = new ArrayCollection;
 		
 		/** stwórz nowy pierwiastek
 		 * @param source źródło obrazka
 		 * @param bondCount ilość wiązań
 		 */
-		public function Element(source:String, bondCount)
+		public function Element(source:String, name)
 		{
 			super();
-			
-			this.bondCount = bondCount;
-			currBondCount = 0;
+			this.name= name;
+			this.bondCount = 10;
 			
 			this.source=source;
 			isSelected=false;
 			this.width  = 100;
 			this.height = 100;
+			allElements.addItem(this);
 			
 		}
 		public function Select():void{
@@ -44,28 +44,34 @@ package
 			this.alpha = 1.0;
 		}
 		
+		public function RemoveElement(){
+			this.RemoveAllBonds();
+			this.parent.removeChild(this as DisplayObject);
+			var i  = allElements.getItemIndex(this);
+			allElements.removeItemAt(i);
+		}
 		
 		
 		public function AddBond(bond:Bond){
 			
 			bonds.addItem(bond);
-				this.currBondCount++;
 	
 		}
 		
 		public function RemoveBond(bond:Bond){
 			var index = bonds.getItemIndex(bond);
-			bonds.removeItemAt(index);
-			currBondCount--;
-			
+				bonds.removeItemAt(index);
 		}
 		
 		public function RemoveAllBonds(){
-			for each (var bond:Bond in bonds){
+			var toDel=[];
+			for each(var bond in this.bonds){
+				toDel.push(bond);
+			}
+			for each(var bond in toDel){
 				bond.RemoveBond();
 			}
 			bonds = new ArrayCollection;
-			currBondCount = 0;
 			
 		}
 		
