@@ -15,7 +15,7 @@ package
 		
 		private var bondCount:uint;
 		public var currBondCount;
-		private var bonds:ArrayCollection = new ArrayCollection;
+		public var bonds:ArrayCollection = new ArrayCollection;
 		
 		
 		/** stwórz nowy pierwiastek

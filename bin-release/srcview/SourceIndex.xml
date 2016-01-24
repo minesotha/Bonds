@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of bonds</title>
+	<nodes>
+		<node label="html-template">
+			<node label="history">
+				<node icon="cssIcon" label="history.css" url="source/html-template/history/history.css.html"/>
+				<node label="history.js" url="source/html-template/history/history.js.txt"/>
+				<node icon="htmlIcon" label="historyFrame.html" url="source/html-template/history/historyFrame.html"/>
+			</node>
+			<node icon="htmlIcon" label="index.template.html" url="source/html-template/index.template.html"/>
+			<node icon="swfIcon" label="playerProductInstall.swf" url="source/html-template/playerProductInstall.swf"/>
+			<node label="swfobject.js" url="source/html-template/swfobject.js.txt"/>
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src">
+			<node label="assets">
+				<node icon="imageIcon" label="_s.png" url="source/assets/_s.png.html"/>
+				<node icon="imageIcon" label="s.png" url="source/assets/s.png.html"/>
+			</node>
+			<node icon="actionScriptIcon" label="Bond.as" url="source/Bond.as.html"/>
+			<node icon="mxmlAppIcon" selected="true" label="bonds.mxml" url="source/bonds.mxml.html"/>
+			<node icon="actionScriptIcon" label="Element.as" url="source/Element.as.html"/>
+			<node icon="actionScriptIcon" label="Main.as" url="source/Main.as.html"/>
+		</node>
+	</nodes>
+	<zipfile label="Download source (ZIP, 26K)" url="bonds.zip">
+	</zipfile>
+	<sdklink label="Download Flex SDK" url="http://www.adobe.com/go/flex451_sdk_download">
+	</sdklink>
+</index>

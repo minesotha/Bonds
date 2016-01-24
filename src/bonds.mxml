@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
-			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:local="*">
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:local="*"
+			   width="800" height="600" minWidth="800" minHeight="600"
+			   viewSourceURL="srcview/index.html">
 <fx:Script>
 	<![CDATA[
 		import flashx.textLayout.formats.Float;
@@ -17,32 +20,28 @@
 		private var lastTarget:Element;
 		private var startX:Number 
 		private var startY:Number;
+		private var isMoveMode:Boolean;
+		
 		
 		
 		public function init():void{
 		
 			isDown = false;
+			isMoveMode = true;
+			field.addEventListener(MouseEvent.CLICK, onStageClick,true,10);
+		}
+		
+		private function onStageClick():void{
+			field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			currTarget=null;
+			lastTarget=null;
+		}
+		
 
-		}
 		
-		
-		/**kreacja tablicy mendelejewa*/
-		private function AddImages(){
-			var img= new spark.components.Image();
-			img.source = "assets/s.png";
-			img.name = "s";
-			img.addEventListener(MouseEvent.CLICK, onBoardMouseClick);
-			imgGroup.addElement(img);
-		}
-		
-		private function onBoardMouseClick(e:MouseEvent):void{
-			var _name = e.target.parent.name;
-			trace("clicked on ",_name);
-			addPierwiastek(_name);
-		}
-		
-		/** dodawanie pierwiastka na stol */
-		private function addPierwiastek(name:String):void{
+		private function onBoardMouseClick(name:String):void{
+			trace("clicked on ",name);
+
 			if(currTarget!=null){
 				currTarget.Unselect();
 				currTarget = null;
@@ -51,65 +50,40 @@
 				lastTarget.Unselect();
 				lastTarget = null;
 			}
-			
-			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		var _source:String = "";
 		var isFound:Boolean=true;
 			
-			switch(name){
-				case "s":
-					_source= "assets/_s.png";
-					break;
-				default:
-					isFound=false;
-					break;
-			}
-			
-			if(isFound==true){
+					_source= "assets/_"+name+".png";
+
 				
 				var img : Element = new Element(_source, 3);
-				img.addEventListener(MouseEvent.MOUSE_DOWN, onElementMouseDown);
+				img.addEventListener(MouseEvent.CLICK, ChooseElement);
 				board.addChild(img as DisplayObject);
-				
-//				
-//				var img= new spark.components.Image();
-//				img.source =_source;
-//				img.addEventListener(MouseEvent.MOUSE_DOWN, onElementMouseDown);
-//				img.name = "_"+name;
-//				board.addChild(img);
-			}
-			else{
-				trace("name not found");
-			}
+
 		}
 		
-		private function onElementMouseDown(e:MouseEvent):void{
-	
 		
-			stage.addEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
-			var target  = e.target.parent;
-			if(e.shiftKey){
-				startDrawingBond();
-			}
-			else {
-				MoveElement(target);
-			}
-			
-		}
 		
-		/** poruszanie pierwiastków po planszy / rysowanie wiązań */
-		private function MoveElement(target:Element){
-	
-			if(target==currTarget){
+		private function ChooseElement(e:MouseEvent){
+			var target:Element  = e.target.parent;
+			if (target==null){
+				currTarget.Unselect();
+				currTarget = null;
+				lastTarget.Unselect();
+				lastTarget = null;
+			}
+			else if(target==currTarget){
 				target.Unselect();
 				currTarget=null;
-			
+				
+			}
+			else if(target==lastTarget){
+				target.Unselect();
+				currTarget=target;
 			}
 			else{
-				stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				isDown=true;
-				target.RemoveAllBonds();
+				
 				
 				if(lastTarget!=null){
 					lastTarget.Unselect();
@@ -117,9 +91,16 @@
 				lastTarget=currTarget;
 				currTarget  = target;
 				currTarget.Select();
-				currTarget.alpha=0.5;
 			}
 			
+			if(e.shiftKey){
+			startDrawingBond();
+			}
+			else{
+				isDown=true;
+				field.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				field.addEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
+			}
 		}
 		
 	
@@ -127,10 +108,22 @@
 		/** przeciaganie pierwiastków */
 		private function onMouseMove(e:MouseEvent):void
 		{
+			//	currTarget.RemoveAllBonds();
 		
+			if(currTarget == null){
+				isDown=false;
+				field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			}
 			if(isDown) {
-				currTarget.x = mouseX-46;
-				currTarget.y=mouseY-46;
+				currTarget.x = board.mouseX-46;
+				currTarget.y=board.mouseY-46;
+				
+				for each (var bond:Bond  in currTarget.bonds){
+					bond.graphics.clear();
+					bond.graphics.lineStyle(5, 0xFF0000, 1);
+					bond.graphics.moveTo(bond.curr.x+50, bond.curr.y+50);
+					bond.graphics.lineTo(bond.last.x+50, bond.last.y+50);
+				}
 			}
 	
 			
@@ -138,9 +131,8 @@
 		
 
 		private function onElementMouseUp(e:MouseEvent):void{
-			stage.removeEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseMove);
-			
+			field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			field.removeEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
 			isDown=false;
 			
 			
@@ -205,19 +197,37 @@
 	
 	
 	<s:BorderContainer left="0" right="0" top="0" bottom="0" horizontalCenter="0" verticalCenter="0" initialize="init">
-		<s:VGroup id="imgGroup" left="0" right="0" bottom="0" height="150" horizontalCenter="0"
-				  preinitialize="AddImages()">
-		</s:VGroup>
-		<s:BorderContainer left="0" right="0" top="0" height="450" horizontalCenter="0">
-			<local:Main id="board" left="0" right="0" top="0" bottom="0" horizontalCenter="0"
-						verticalCenter="0">
-			</local:Main>
-			<s:HGroup left="730" right="0" top="400" bottom="0" horizontalAlign="right"
-					  verticalAlign="bottom" verticalCenter="200">
-				<s:Button id="done_btn" x="50" width="100" label="gotowe!" click="onReadyClick"/>
-				<s:Button id="addBond_btn" label="dodaj wiązanie" click="startDrawingBond()"/>
-				<s:Button id="remove_btn" label="usuń pierwiastek" click="DeleteCurrent()" />
+		<s:VGroup left="0" right="0" top="0" bottom="0" horizontalAlign="center" horizontalCenter="0"
+				  verticalAlign="top" verticalCenter="0">
+			<s:HGroup id="field" x="191" width="600" height="400" horizontalAlign="right"
+					  verticalAlign="bottom">
+				<local:Main id="board" x="4" y="0" width="600" height="400">
+				</local:Main>
+					<s:Image x="555" y="349" width="42" height="42" click="DeleteCurrent()"
+							 source="assets/bin.png"/>
 			</s:HGroup>
-		</s:BorderContainer>
+			<s:HGroup id="imgGroup" x="165" horizontalAlign="center" verticalAlign="middle">
+				<s:Image source="assets/H.png" click="onBoardMouseClick('h')"/>
+				<s:Image source="assets/C.png" click="onBoardMouseClick('c')"/>
+				<s:Image source="assets/N.png" click="onBoardMouseClick('n')"/>
+				<s:Image source="assets/O.png" click="onBoardMouseClick('o')"/>
+				<s:Image source="assets/Cl.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/F.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/Na.png" click="onBoardMouseClick"/>
+			</s:HGroup>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle">
+				<s:Image source="assets/P.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/S.png" click="onBoardMouseClick('s')" />
+				<s:Image source="assets/K.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/Fe.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/Ni.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/Cu.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/Zn.png" click="onBoardMouseClick"/>
+			</s:HGroup>
+			<s:HGroup x="131" width="536" height="36" horizontalAlign="center">
+				<s:Button id="done_btn" width="100" label="gotowe!" click="onReadyClick"/>
+				<s:Button id="clear_btn" label="zacznij od nowa"/>
+			</s:HGroup>
+		</s:VGroup>
 	</s:BorderContainer>
 </s:Application>
