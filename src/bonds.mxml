@@ -4,7 +4,7 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:local="*"
 			   width="800" height="650" minWidth="850" minHeight="650" backgroundColor="#779198"
-			   pageTitle="Wiązania Chemiczne" viewSourceURL="srcview/index.html">
+			   pageTitle="Wiązania Chemiczne">
 	<s:layout>
 		<s:BasicLayout/>
 	</s:layout>
@@ -70,7 +70,7 @@
 		
 		
 		private function ChooseElement(e:MouseEvent){
-			var target:Element  = e.target.parent;
+			var target  = e.target.parent;
 			if (target==null){
 				currTarget.Unselect();
 				currTarget = null;
