@@ -203,7 +203,7 @@
 					  verticalAlign="bottom">
 				<local:Main id="board" x="4" y="0" width="600" height="400">
 				</local:Main>
-					<s:Image x="555" y="349" width="42" height="42" click="DeleteCurrent()"
+					<s:Image x="536" y="336" width="64" height="64" click="DeleteCurrent()"
 							 source="assets/bin.png"/>
 			</s:HGroup>
 			<s:HGroup id="imgGroup" x="165" horizontalAlign="center" verticalAlign="middle">
@@ -211,18 +211,18 @@
 				<s:Image source="assets/C.png" click="onBoardMouseClick('c')"/>
 				<s:Image source="assets/N.png" click="onBoardMouseClick('n')"/>
 				<s:Image source="assets/O.png" click="onBoardMouseClick('o')"/>
-				<s:Image source="assets/Cl.png" click="onBoardMouseClick"/>
-				<s:Image source="assets/F.png" click="onBoardMouseClick"/>
-				<s:Image source="assets/Na.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/Cl.png" click="onBoardMouseClick('cl')"/>
+				<s:Image source="assets/F.png" click="onBoardMouseClick('f')"/>
+				<s:Image source="assets/Na.png" click="onBoardMouseClick('na')"/>
 			</s:HGroup>
 			<s:HGroup horizontalAlign="center" verticalAlign="middle">
-				<s:Image source="assets/P.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/P.png" click="onBoardMouseClick('p')"/>
 				<s:Image source="assets/S.png" click="onBoardMouseClick('s')" />
-				<s:Image source="assets/K.png" click="onBoardMouseClick"/>
-				<s:Image source="assets/Fe.png" click="onBoardMouseClick"/>
-				<s:Image source="assets/Ni.png" click="onBoardMouseClick"/>
-				<s:Image source="assets/Cu.png" click="onBoardMouseClick"/>
-				<s:Image source="assets/Zn.png" click="onBoardMouseClick"/>
+				<s:Image source="assets/K.png" click="onBoardMouseClick('k')"/>
+				<s:Image source="assets/Fe.png" click="onBoardMouseClick('fe')"/>
+				<s:Image source="assets/Ni.png" click="onBoardMouseClick('ni')"/>
+				<s:Image source="assets/Cu.png" click="onBoardMouseClick('cu')"/>
+				<s:Image source="assets/Zn.png" click="onBoardMouseClick('zn')"/>
 			</s:HGroup>
 			<s:HGroup x="131" width="536" height="36" horizontalAlign="center">
 				<s:Button id="done_btn" width="100" label="gotowe!" click="onReadyClick"/>
