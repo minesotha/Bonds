@@ -131,8 +131,8 @@
 					for each (var bond:Bond  in currTarget.bonds){
 						bond.graphics.clear();
 						bond.graphics.lineStyle(5, 0x89D289, 1);
-						bond.graphics.moveTo(bond.curr.x+30+bondCount, bond.curr.y+30+bondCount);
-						bond.graphics.lineTo(bond.last.x+30+bondCount, bond.last.y+30+bondCount);
+						bond.graphics.moveTo(bond.curr.x+20+bondCount, bond.curr.y+20+bondCount);
+						bond.graphics.lineTo(bond.last.x+20+bondCount, bond.last.y+20+bondCount);
 						bondCount+=10;
 					}
 				}

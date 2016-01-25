@@ -46,6 +46,10 @@ package
 							this.graphics.moveTo(curr.x+80, curr.y+80);
 							this.graphics.lineTo(last.x+80, last.y+80);
 							break;
+						case6:
+							this.graphics.moveTo(curr.x+20, curr.y+20);
+							this.graphics.lineTo(last.x+20, last.y+20);
+							break;
 					}
 					
 				}

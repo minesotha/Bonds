@@ -26,7 +26,7 @@ package
 		{
 			super();
 			this.name= name;
-			this.bondCount = 5;
+			this.bondCount = 6;
 			
 			this.source=source;
 			isSelected=false;
