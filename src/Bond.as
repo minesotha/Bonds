@@ -9,7 +9,7 @@ package
 	{
 		public var curr:Element;
 		public var last:Element;
-		private var allBonds:ArrayCollection =new ArrayCollection;
+		private static var allBonds:ArrayCollection =new ArrayCollection();
 		
 		
 		public function Bond(currentTarget,lastTarget)
@@ -22,11 +22,34 @@ package
 		
 				super();
 				
+				if(getSimBondsNumber()>0){
+					trace("bylo");
+				}
+				
+				
 				this.graphics.lineStyle(5, 0x89D289, 1);
 				allBonds.addItem(this);
 				
 			
 		}
+		
+		/** ile jest podobnych wiazan */
+		private function getSimBondsNumber():Number{
+			var num = 0;
+			for each (var bond:Bond in allBonds){
+				if(this.curr == bond.curr && this.last == bond.last){
+					num++;
+				}
+					else if( this.curr == bond.last || this.last == bond.curr){
+					num++;
+				}
+			}
+			
+			return num;
+		}
+		
+		
+		
 		
 		public function RemoveBond(){
 			
