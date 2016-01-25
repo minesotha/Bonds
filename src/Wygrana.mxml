@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="402" height="138" backgroundColor="#8AAD1E" borderColor="#44401F"
+			   chromeColor="#5A8B39" close="goBack()" cornerRadius="10" rollOverColor="#E4CB23">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			private function goBack(){
+				this.visible = false;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label left="0" right="0" top="0" height="80" chromeColor="#595A20" color="#2A2922"
+			 fontFamily="Courier New" fontSize="30" fontWeight="bold" horizontalCenter="0"
+			 text="GRATULACJE! Równanie ułożone poprawnie!" textAlign="center" textDecoration="none"
+			 verticalAlign="middle"/>
+	<s:Button id="ok_btn" left="0" right="0" bottom="0" label="OK" chromeColor="#72B413"
+			  click="goBack()" color="#262523" fontFamily="Courier New" fontSize="20"
+			  fontWeight="bold" horizontalCenter="0"/>
+</s:TitleWindow>

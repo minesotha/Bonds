@@ -4,7 +4,8 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:local="*"
 			   width="800" height="650" minWidth="850" minHeight="650" backgroundColor="#779198"
-			   pageTitle="Wiązania Chemiczne">
+			   pageTitle="Wiązania Chemiczne"
+			   initialize="init()">
 	<s:layout>
 		<s:BasicLayout/>
 	</s:layout>
@@ -15,7 +16,9 @@
 			import mx.collections.ArrayCollection;
 			import mx.controls.Image;
 			import mx.core.BitmapAsset;
+			import mx.managers.PopUpManager;
 			
+			import spark.components.TitleWindow;
 			import spark.skins.spark.ImageSkin;
 			
 			
@@ -25,19 +28,22 @@
 			private var startX:Number 
 			private var startY:Number;
 			private var isMoveMode:Boolean;
-					
+			private var punkty:Number;
+			public var failText:String;
+			
 			public function init():void{
-				
+			//0field.addEventListener(MouseEvent.CLICK, onGlobalClick);
+				punkty = 0;
+				punkty_label.text ="Punkty: "+punkty;	
 				isDown = false;
 				isMoveMode = true;
-				field.addEventListener(MouseEvent.CLICK, onStageClick,true,10);
 			}
 			
-			private function onStageClick():void{
-				field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				currTarget=null;
-				lastTarget=null;
-			}
+//			function onGlobalClick(){
+//				field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+//				currTarget=null;
+//				lastTarget=null;
+//			}
 			
 			
 			
@@ -283,7 +289,7 @@
 				
 				
 				if(arr.length !=elemCount){
-					trace("zla ilosc pierwiastkow naplanszy");
+					failText=("Zła ilosc pierwiastkow");
 					isLost = true;
 				}
 					
@@ -295,12 +301,12 @@
 							if(elem.name ==names[i]){
 								currCount[i]++;
 								if(currCount[i]>count[i]){
-									trace("za duzo: ", names[i]);
+									failText=("za duzo: "+ names[i]);
 									isLost = true;
 									break;
 								}
 								else if(elem.currBondCount != bondCount[i]){
-									trace("przegrana, zła ilość wiązań dla: ", names[i]);
+									failText="Zła ilość wiązań dla: "+ names[i];
 									isLost = true;
 									break;
 								}
@@ -311,7 +317,8 @@
 					
 					for (var  i = 0; i<names.length;i++){
 						if(count[i] != currCount[i]){
-							trace("przegrana, za mala ilosc: ", names[i]);
+							failText=("Za mala ilość: "+ names[i]);
+							
 							isLost = true;
 						}
 					}
@@ -320,27 +327,44 @@
 				
 				if ( isLost ==  false){
 					trace("WYGRANA!");
+				showWygranaDialog();
+					punkty++;
+					punkty_label.text = "Punkty: "+ punkty;
+					getLabel();
+					
 				}
 				else {
-					//todo; przegrana
+					showPrzegranaDialog();
+					punkty--;
+					punkty_label.text = "Punkty: "+ punkty;
 				}
 				
 			}
 			
+			
+			public function showWygranaDialog():void{
+				var helpWindow:TitleWindow=
+					PopUpManager.createPopUp(this, Wygrana, true) as TitleWindow;
+				PopUpManager.centerPopUp(helpWindow);
+				//	buildDeskDlg.visible=true;
+			}
+			
+			public function showPrzegranaDialog():void{
+				var helpWindow:TitleWindow=
+					PopUpManager.createPopUp(this, Przegrana, true) as TitleWindow;
+				PopUpManager.centerPopUp(helpWindow);
+				//	buildDeskDlg.visible=true;
+			}
 			
 			protected function Clear(){
 				while(board.numChildren>0){
 					var elem = board.getChildAt(0);
 					elem.RemoveElement();			
 				}
-				getLabel();
 				
 			}
 			
-			
-				protected function getLabel(){
-					
-					var namesArr = ['Tlenek Siarki (VI) SO3',
+						var arr = ['Tlenek Siarki (VI) SO3',
 						'Siarczek Potasu K2S',
 						'Chlorek Sodu NaCl',
 						'Tlenek Miedzi (I) Cu2O',
@@ -351,8 +375,20 @@
 						'Kwas Siarkowy (VI) H2SO4',
 						'Kwas Siarkowy (IV) H2SO3'];
 					
-					var i  =Math.round(Math.random()*9);
+					var namesArr:ArrayCollection = new ArrayCollection(arr);
+			
+				protected function getLabel(){
+					
+						
+					if(namesArr.length>0){
+					
+					var i  =Math.round(Math.random()*(namesArr.length-1));
 					zadanie_label.text = namesArr[i];
+					namesArr.removeItemAt(i);
+					}
+					else{
+						zadanie_label.text = "Koniec równań!";
+					}
 				}
 			
 			
@@ -367,10 +403,9 @@
 					 fontWeight="bold" text='' textAlign="center" verticalAlign="middle" preinitialize="getLabel()"/>
 			<s:HGroup id="field" x="191" width="600" height="400" horizontalAlign="right"
 					  verticalAlign="bottom">
-				<local:Main id="board" x="4" y="0" width="600" height="400">
+				<local:Main id="board" width="600" height="400">
 				</local:Main>
-				<s:Image x="536" y="336" width="64" height="64" click="DeleteCurrent()"
-						 source="assets/bin.png"/>
+				<s:Image width="64" height="64" click="DeleteCurrent()" source="assets/bin.png"/>
 			</s:HGroup>
 			<s:HGroup id="imgGroup" x="165" horizontalAlign="center" verticalAlign="middle">
 				<s:Image source="assets/H.png" click="onBoardMouseClick('h')"/>
@@ -391,8 +426,14 @@
 				<s:Image source="assets/Zn.png" click="onBoardMouseClick('zn')"/>
 			</s:HGroup>
 			<s:HGroup x="131" width="536" height="23" horizontalAlign="center">
-				<s:Button id="done_btn" width="100" label="gotowe!" click="Check()"/>
-				<s:Button id="clear_btn" label="zacznij od nowa" click = "Clear()"/>
+				<s:Button id="done_btn" width="100" label="gotowe!" chromeColor="#64FB21"
+						  click="Check()" color="#2A4A2D" focusColor="#206A7C" fontFamily="Arial"
+						  fontWeight="bold"/>
+				<s:Button id="clear_btn" label="zacznij od nowa" chromeColor="#F6AC0C"
+						  click="Clear()" color="#535714" focusColor="#1E405F" fontWeight="bold"/>
+				<s:Label id="punkty_label" x="338" width="83" height="23" chromeColor="#9E8D8D"
+						 color="#FF3600" fontFamily="Arial" fontSize="16" fontWeight="bold"
+						 text="Punkty: " textAlign="left" verticalAlign="middle"/>
 			</s:HGroup>
 			<s:HGroup width="536" height="23" horizontalAlign="center">
 				<s:Label fontFamily="Arial" fontSize="12" fontStyle="italic"
