@@ -127,11 +127,13 @@
 					currTarget.x = board.mouseX-46;
 					currTarget.y=board.mouseY-46;
 					
+					var bondCount = 0;
 					for each (var bond:Bond  in currTarget.bonds){
 						bond.graphics.clear();
 						bond.graphics.lineStyle(5, 0x89D289, 1);
-						bond.graphics.moveTo(bond.curr.x+50, bond.curr.y+50);
-						bond.graphics.lineTo(bond.last.x+50, bond.last.y+50);
+						bond.graphics.moveTo(bond.curr.x+30+bondCount, bond.curr.y+30+bondCount);
+						bond.graphics.lineTo(bond.last.x+30+bondCount, bond.last.y+30+bondCount);
+						bondCount+=10;
 					}
 				}
 				
@@ -154,11 +156,9 @@
 				if(lastTarget!=null&& lastTarget!=currTarget && currTarget!=null){
 					if(lastTarget.isAvalibleBonds() && currTarget.isAvalibleBonds()){
 						var bond:Bond = new Bond(currTarget,lastTarget);
-						board.addChild(bond);
-						bond.graphics.moveTo(currTarget.x+50, currTarget.y+50);
-						bond.graphics.lineTo(lastTarget.x+50, lastTarget.y+50);
+						board.addChildAt(bond, 0);
 						bond.addEventListener(MouseEvent.CLICK, onBondClick);
-						bond.Update();
+					//	bond.Update();
 						currTarget.Unselect();
 						lastTarget.Unselect();
 						currTarget = null;
@@ -331,6 +331,7 @@
 					punkty++;
 					punkty_label.text = "Punkty: "+ punkty;
 					getLabel();
+					Clear();
 					
 				}
 				else {
