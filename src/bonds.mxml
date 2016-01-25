@@ -8,173 +8,171 @@
 	<s:layout>
 		<s:BasicLayout/>
 	</s:layout>
-<fx:Script>
-	<![CDATA[
-		import flashx.textLayout.formats.Float;
-		
-		import mx.collections.ArrayCollection;
-		import mx.controls.Image;
-		import mx.core.BitmapAsset;
-		
-		import spark.skins.spark.ImageSkin;
-		
- 	
-		private var isDown:Boolean;
-		private var currTarget:Element;
-		private var lastTarget:Element;
-		private var startX:Number 
-		private var startY:Number;
-		private var isMoveMode:Boolean;
-		
-		
-		
-		public function init():void{
-		
-			isDown = false;
-			isMoveMode = true;
-			field.addEventListener(MouseEvent.CLICK, onStageClick,true,10);
-		}
-		
-		private function onStageClick():void{
-			field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			currTarget=null;
-			lastTarget=null;
-		}
-		
-
-		
-		private function onBoardMouseClick(name:String):void{
-			trace("clicked on ",name);
-
-			if(currTarget!=null){
-				currTarget.Unselect();
-				currTarget = null;
-			}
-			if(lastTarget!=null){
-				lastTarget.Unselect();
-				lastTarget = null;
-			}
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-		var _source:String = "";
-		var isFound:Boolean=true;
+	<fx:Script>
+		<![CDATA[
+			import flashx.textLayout.formats.Float;
 			
-					_source= "assets/_"+name+".png";
-
+			import mx.collections.ArrayCollection;
+			import mx.controls.Image;
+			import mx.core.BitmapAsset;
+			
+			import spark.skins.spark.ImageSkin;
+			
+			
+			private var isDown:Boolean;
+			private var currTarget:Element;
+			private var lastTarget:Element;
+			private var startX:Number 
+			private var startY:Number;
+			private var isMoveMode:Boolean;
+					
+			public function init():void{
+				
+				isDown = false;
+				isMoveMode = true;
+				field.addEventListener(MouseEvent.CLICK, onStageClick,true,10);
+			}
+			
+			private function onStageClick():void{
+				field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				currTarget=null;
+				lastTarget=null;
+			}
+			
+			
+			
+			private function onBoardMouseClick(name:String):void{
+				trace("clicked on ",name);
+				
+				if(currTarget!=null){
+					currTarget.Unselect();
+					currTarget = null;
+				}
+				if(lastTarget!=null){
+					lastTarget.Unselect();
+					lastTarget = null;
+				}
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+				var _source:String = "";
+				var isFound:Boolean=true;
+				
+				_source= "assets/_"+name+".png";
+				
 				
 				var img : Element = new Element(_source,name);
 				img.addEventListener(MouseEvent.CLICK, ChooseElement);
 				board.addChild(img as DisplayObject);
-
-		}
-		
-		
-		
-		private function ChooseElement(e:MouseEvent){
-			var target  = e.target.parent;
-			if (target==null){
-				currTarget.Unselect();
-				currTarget = null;
-				lastTarget.Unselect();
-				lastTarget = null;
-			}
-			else if(target==currTarget){
-				target.Unselect();
-				currTarget=null;
 				
 			}
-			else if(target==lastTarget){
-				target.Unselect();
-				currTarget=target;
-			}
-			else{
-				
-				
-				if(lastTarget!=null){
+		
+			
+			
+			private function ChooseElement(e:MouseEvent){
+				var target  = e.target.parent;
+				if (target==null){
+					currTarget.Unselect();
+					currTarget = null;
 					lastTarget.Unselect();
+					lastTarget = null;
 				}
-				lastTarget=currTarget;
-				currTarget  = target;
-				currTarget.Select();
-			}
-			
-			if(e.shiftKey){
-			startDrawingBond();
-			
-			}
-			else{
-				isDown=true;
-				field.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				field.addEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
-			}
-		}
-		
-	
-		
-		/** przeciaganie pierwiastków */
-		private function onMouseMove(e:MouseEvent):void
-		{
-			//	currTarget.RemoveAllBonds();
-		
-			if(currTarget == null){
-				isDown=false;
-				field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			}
-			if(isDown) {
-				currTarget.x = board.mouseX-46;
-				currTarget.y=board.mouseY-46;
+				else if(target==currTarget){
+					target.Unselect();
+					currTarget=null;
+					
+				}
+				else if(target==lastTarget){
+					target.Unselect();
+					currTarget=target;
+				}
+				else{
+					
+					
+					if(lastTarget!=null){
+						lastTarget.Unselect();
+					}
+					lastTarget=currTarget;
+					currTarget  = target;
+					currTarget.Select();
+				}
 				
-				for each (var bond:Bond  in currTarget.bonds){
-					bond.graphics.clear();
-					bond.graphics.lineStyle(5, 0x89D289, 1);
-					bond.graphics.moveTo(bond.curr.x+50, bond.curr.y+50);
-					bond.graphics.lineTo(bond.last.x+50, bond.last.y+50);
+				if(e.shiftKey){
+					startDrawingBond();
+					
+				}
+				else{
+					isDown=true;
+					field.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+					field.addEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
 				}
 			}
-	
-			
-		}
-		
-
-		private function onElementMouseUp(e:MouseEvent):void{
-			field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			field.removeEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
-			isDown=false;
 			
 			
-		}
-		
-	
-		
-		private function startDrawingBond(){
 			
-			if(lastTarget!=null&& lastTarget!=currTarget && currTarget!=null){
-				if(lastTarget.isAvalibleBonds() && currTarget.isAvalibleBonds()){
-					var bond:Bond = new Bond(currTarget,lastTarget);
-					board.addChild(bond);
+			/** przeciaganie pierwiastków */
+			private function onMouseMove(e:MouseEvent):void
+			{
+				//	currTarget.RemoveAllBonds();
+				
+				if(currTarget == null){
+					isDown=false;
+					field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				}
+				if(isDown) {
+					currTarget.x = board.mouseX-46;
+					currTarget.y=board.mouseY-46;
+					
+					for each (var bond:Bond  in currTarget.bonds){
+						bond.graphics.clear();
+						bond.graphics.lineStyle(5, 0x89D289, 1);
+						bond.graphics.moveTo(bond.curr.x+50, bond.curr.y+50);
+						bond.graphics.lineTo(bond.last.x+50, bond.last.y+50);
+					}
+				}
+				
+				
+			}
+			
+			
+			private function onElementMouseUp(e:MouseEvent):void{
+				field.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				field.removeEventListener(MouseEvent.MOUSE_UP, onElementMouseUp);
+				isDown=false;
+				
+				
+			}
+			
+			
+			
+			private function startDrawingBond(){
+				
+				if(lastTarget!=null&& lastTarget!=currTarget && currTarget!=null){
+					if(lastTarget.isAvalibleBonds() && currTarget.isAvalibleBonds()){
+						var bond:Bond = new Bond(currTarget,lastTarget);
+						board.addChild(bond);
 						bond.graphics.moveTo(currTarget.x+50, currTarget.y+50);
 						bond.graphics.lineTo(lastTarget.x+50, lastTarget.y+50);
-					bond.addEventListener(MouseEvent.CLICK, onBondClick);
-					bond.Update();
-					currTarget.Unselect();
-					lastTarget.Unselect();
-					currTarget = null;
-					lastTarget = null;
-		
+						bond.addEventListener(MouseEvent.CLICK, onBondClick);
+						bond.Update();
+						currTarget.Unselect();
+						lastTarget.Unselect();
+						currTarget = null;
+						lastTarget = null;
+						
 					}
-				else{
-					trace("maximum bonds");
+					else{
+						trace("maximum bonds");
+					}
 				}
+				
 			}
 			
-		}
-		
-		
-		private function onBondClick(e:MouseEvent){
-			var target = e.target as Bond;
-			target.removeEventListener(MouseEvent.CLICK, onBondClick);
-			target.RemoveBond();
-		}
-		
+			
+			private function onBondClick(e:MouseEvent){
+				var target = e.target as Bond;
+				target.removeEventListener(MouseEvent.CLICK, onBondClick);
+				target.RemoveBond();
+			}
+			
 			private function onKeyDown(e:KeyboardEvent):void{
 				
 				if(e.keyCode==Keyboard.DELETE){
@@ -182,109 +180,197 @@
 					
 				}
 			}
-		
-		private function DeleteCurrent():void{
-			if(currTarget!=null){
-				currTarget.RemoveElement();
-				currTarget=null;
-			}
-		}
-		
-		private function Check():void{
-			var isLost = false;
-			var arr:Array = [];
-			for each (var elem in Element.allElements){
-				arr.push(elem);								
-			}
-			var names = [];
-			var currCount = [];
-			var count = [];
-			var bondCount = [];
-			var elemCount=0;
-				
-			if(zadanie_label.text === "Kwas Siarkowy (IV)"){
-				names = ["s","o","h"];
-				currCount = [0,0,0];
-				count = [1,3,2];
-				 bondCount = [4,2,1];
-				 elemCount = 6;
-			}
 			
-			
-			
-							 if(arr.length !=elemCount){
-								 trace("zla ilosc pierwiastkow naplanszy");
-								 isLost = true;
-							 }
-							 
-							 else{
-								 trace("dobra ilosc pierwiastkow na planszy");
-								 	var temp = []
-									 for each(var elem in arr){
-										 for(var i = 0; i<names.length; i++){
-											 if(elem.name ==names[i]){
-												 currCount[i]++;
-												 if(currCount[i]>count[i]){
-													 trace("za duzo: ", names[i]);
-													 isLost = true;
-													 break;
-												 }
-												 else if(elem.currBondCount != bondCount[i]){
-													 trace("przegrana, zła ilość wiązań dla: ", names[i]);
-													 isLost = true;
-													 break;
-												 }
-											 }
-										 }
-											 
-								 }
-									 
-									 for (var  i = 0; i<names.length;i++){
-										 if(count[i] != currCount[i]){
-											 trace("przegrana, za mala ilosc: ", names[i]);
-											 isLost = true;
-										 }
-									 }
-									 
-							 }
-							
-							 if ( isLost ==  false){
-								 trace("WYGRANA!");
-							 }
-							 else {
-								 //todo; przegrana
-							 }
-					
-		}
-		
-		
-		protected function Clear(){
-			while(board.numChildren>0){
-				var elem = board.getChildAt(0);
-				elem.RemoveElement();			
+			private function DeleteCurrent():void{
+				if(currTarget!=null){
+					currTarget.RemoveElement();
+					currTarget=null;
 				}
-		
+			}
 			
-		}
-		
-		
-
-		
-	]]>
-</fx:Script>
+			private function Check():void{
+				var isLost = false;
+				var arr:Array = [];
+				for each (var elem in Element.allElements){
+					arr.push(elem);								
+				}
+				var names = [];
+				var currCount = [];
+				var count = [];
+				var bondCount = [];
+				var elemCount=0;
+				
+				if(zadanie_label.text === "Kwas Siarkowy (IV) H2SO3"){
+					names = ["s","o","h"];
+					currCount = [0,0,0];
+					count = [1,3,2];
+					bondCount = [4,2,1];
+					elemCount = 6;
+				}
+					
+				else if(zadanie_label.text === "Kwas Siarkowy (VI) H2SO4"){
+					names = ["s","o","h"];
+					currCount = [0,0,0];
+					count = [1,4,2];
+					bondCount = [6,2,1];
+					elemCount = 7;
+				}
+					
+				else if(zadanie_label.text === "Kwas Azotowy (V) HNO2"){
+					names = ["n","o","h"];
+					currCount = [0,0,0];
+					count = [1,3,1];
+					bondCount = [5,2,1];
+					elemCount = 5;
+				}
+					
+				else if(zadanie_label.text === "Kwas Węglowy H2CO3"){
+					names = ["c","o","h"];
+					currCount = [0,0,0];
+					count = [1,3,2];
+					bondCount = [4,2,1];
+					elemCount = 6;
+				}
+					
+				else if(zadanie_label.text === "Kwas Siarkowodorowy H2S"){
+					names = ["s","h"];
+					currCount = [0,0];
+					count = [1,2];
+					bondCount = [2,1];
+					elemCount = 3;
+				}
+					
+				else if(zadanie_label.text === "Tlenek Żelaza (III) Fe2O3"){
+					names = ["fe","o"];
+					currCount = [0,0];
+					count = [2,3];
+					bondCount = [3,2];
+					elemCount = 5;
+				}
+					
+				else if(zadanie_label.text === "Tlenek Miedzi (I) Cu2O"){
+					names = ["cu","o"];
+					currCount = [0,0];
+					count = [2,1];
+					bondCount = [1,2];
+					elemCount = 3;
+				}
+					
+				else if(zadanie_label.text === "Chlorek Sodu NaCl"){
+					names = ["na","cl"];
+					currCount = [0,0];
+					count = [1,1];
+					bondCount = [1,1];
+					elemCount = 2;
+				}
+					
+				else if(zadanie_label.text === "Siarczek Potasu K2S"){
+					names = ["k","s"];
+					currCount = [0,0];
+					count = [2,1];
+					bondCount = [1,2];
+					elemCount = 3;
+				}
+					
+				else if(zadanie_label.text === "Tlenek Siarki (VI) SO3"){
+					names = ["s","o"];
+					currCount = [0,0];
+					count = [1,3];
+					bondCount = [6,2];
+					elemCount = 4;
+				}
+				
+				
+				
+				if(arr.length !=elemCount){
+					trace("zla ilosc pierwiastkow naplanszy");
+					isLost = true;
+				}
+					
+				else{
+					trace("dobra ilosc pierwiastkow na planszy");
+					var temp = []
+					for each(var elem in arr){
+						for(var i = 0; i<names.length; i++){
+							if(elem.name ==names[i]){
+								currCount[i]++;
+								if(currCount[i]>count[i]){
+									trace("za duzo: ", names[i]);
+									isLost = true;
+									break;
+								}
+								else if(elem.currBondCount != bondCount[i]){
+									trace("przegrana, zła ilość wiązań dla: ", names[i]);
+									isLost = true;
+									break;
+								}
+							}
+						}
+						
+					}
+					
+					for (var  i = 0; i<names.length;i++){
+						if(count[i] != currCount[i]){
+							trace("przegrana, za mala ilosc: ", names[i]);
+							isLost = true;
+						}
+					}
+					
+				}
+				
+				if ( isLost ==  false){
+					trace("WYGRANA!");
+				}
+				else {
+					//todo; przegrana
+				}
+				
+			}
+			
+			
+			protected function Clear(){
+				while(board.numChildren>0){
+					var elem = board.getChildAt(0);
+					elem.RemoveElement();			
+				}
+				getLabel();
+				
+			}
+			
+			
+				protected function getLabel(){
+					
+					var namesArr = ['Tlenek Siarki (VI) SO3',
+						'Siarczek Potasu K2S',
+						'Chlorek Sodu NaCl',
+						'Tlenek Miedzi (I) Cu2O',
+						'Tlenek Żelaza (III) Fe2O3',
+						'Kwas Siarkowodorowy H2S',
+						'Kwas Węglowy H2CO3',
+						'Kwas Azotowy (V) HNO2',
+						'Kwas Siarkowy (VI) H2SO4',
+						'Kwas Siarkowy (IV) H2SO3'];
+					
+					var i  =Math.round(Math.random()*9);
+					zadanie_label.text = namesArr[i];
+				}
+			
+			
+		]]>
+	</fx:Script>
 	
 	
-	<s:BorderContainer left="0" right="0" top="0" bottom="0" horizontalCenter="0" verticalCenter="0" initialize="init">
+	<s:BorderContainer left="0" right="0" top="10" bottom="0" horizontalCenter="0" verticalCenter="0" initialize="init">
 		<s:VGroup left="0" right="0" top="0" bottom="0" horizontalAlign="center" horizontalCenter="0"
 				  verticalAlign="top" verticalCenter="0">
-			<s:Label id="zadanie_label" x="100" width="598" height="15" fontFamily="Arial" fontSize="16"
-					 fontWeight="bold" text="Kwas Siarkowy (IV)" textAlign="center" verticalAlign="middle"/>
+			<s:Label id="zadanie_label" x="100" width="598" height="30" fontFamily="Arial" fontSize="16"
+					 fontWeight="bold" text='' textAlign="center" verticalAlign="middle" preinitialize="getLabel()"/>
 			<s:HGroup id="field" x="191" width="600" height="400" horizontalAlign="right"
 					  verticalAlign="bottom">
 				<local:Main id="board" x="4" y="0" width="600" height="400">
 				</local:Main>
-					<s:Image x="536" y="336" width="64" height="64" click="DeleteCurrent()"
-							 source="assets/bin.png"/>
+				<s:Image x="536" y="336" width="64" height="64" click="DeleteCurrent()"
+						 source="assets/bin.png"/>
 			</s:HGroup>
 			<s:HGroup id="imgGroup" x="165" horizontalAlign="center" verticalAlign="middle">
 				<s:Image source="assets/H.png" click="onBoardMouseClick('h')"/>
@@ -310,7 +396,7 @@
 			</s:HGroup>
 			<s:HGroup width="536" height="23" horizontalAlign="center">
 				<s:Label fontFamily="Arial" fontSize="12" fontStyle="italic"
-						 text="Przytrzymaj klawisz SHIFT,aby dodać wiązanie pomiędzy pierwiastkami." textAlign="center"
+						 text="Przytrzymaj klawisz SHIFT, aby dodać wiązanie pomiędzy pierwiastkami." textAlign="center"
 						 verticalAlign="middle"/>
 			</s:HGroup>
 		</s:VGroup>
