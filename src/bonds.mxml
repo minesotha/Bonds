@@ -176,7 +176,7 @@
 			private function onBondClick(e:MouseEvent){
 				var target = e.target as Bond;
 				target.removeEventListener(MouseEvent.CLICK, onBondClick);
-				target.RemoveBond();
+				target.RemoveElement();
 			}
 			
 			private function onKeyDown(e:KeyboardEvent):void{
